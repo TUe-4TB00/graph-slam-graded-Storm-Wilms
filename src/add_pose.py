@@ -31,4 +31,9 @@ def add_pose(graph, initial_estimate):
         ),
     )
 
+    pose_4 = initial_estimate.atPose2(X(4))
+    pose_5 = pose_4.compose(odom)
+
+    initial_estimate.insert(X(5), pose_5)
+
     return graph, initial_estimate
