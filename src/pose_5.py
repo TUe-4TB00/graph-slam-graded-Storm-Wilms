@@ -50,7 +50,7 @@ def minimize_marginals(graph, initial_estimate, pose_options):
     sum_of_marginals = float("inf")
 
     for pose_key, pose_5 in pose_options.items():
-        for landmark in [1, 2, 3, 4]:
+        for landmark in [1, 2]:
 
             temp_graph = gtsam.NonlinearFactorGraph(graph)
             temp_initial = gtsam.Values(initial_estimate)
@@ -72,10 +72,10 @@ def minimize_marginals(graph, initial_estimate, pose_options):
                 marginals.marginalCovariance(L(2)).sum()
             )
 
-            if current_sum < sum_of_marginals:
-                sum_of_marginals = current_sum
-                best_pose = pose_key
-                best_landmark = landmark
+            
+            sum_of_marginals = current_sum
+            best_pose = pose_key
+            best_landmark = landmark
 
     return best_pose, best_landmark, sum_of_marginals
 
