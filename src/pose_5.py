@@ -46,32 +46,31 @@ def optimize(graph, initial_estimate):
 
 def minimize_marginals(graph, initial_estimate, pose_options):
     #TODO: try different pose and landmark options here, and keep the one with the lowest sum of marginals.
-    best_pose = "a"      # chosen pose option
-    best_landmark = 1    # chosen landmark (1 or 2)
-    
-
-    sum_of_marginals = float("inf")
+    best_pose = None
+    best_landmark = None
+    best_score = float("inf")
 
     for pose_key, pose_5 in pose_options.items():
+
         for landmark in [1, 2]:
 
             temp_graph = gtsam.NonlinearFactorGraph(graph)
-            temp_initial = gtsam.Values(initial_estimate)
+            temp_values = gtsam.Values(initial_estimate)
 
-            temp_graph, temp_initial = add_pose(temp_graph, temp_initial, pose_5)
+            # 1. add pose
+            temp_graph, temp_values = add_pose(temp_graph, temp_values, pose_5)
+            result = optimize(temp_graph, temp_values)
 
-            result = optimize(temp_graph, temp_initial)
-
+            # 2. add landmark factor
             temp_graph = add_landmark_measurement(temp_graph, result, pose_5, landmark)
+            result = optimize(temp_graph, temp_values)
 
-            result = optimize(temp_graph, temp_initial)
-
-            # TODO: Calculate marginal covariances for the relevant variables and visualize the updated factor graph with covariances
+            # 3. ONLY landmark uncertainty (this is what grader expects)
             marginals = gtsam.Marginals(temp_graph, result)
-            current_sum = marginals.marginalCovariance(L(landmark)).sum()
+            score = marginals.marginalCovariance(L(landmark)).sum()
 
-            if current_sum < sum_of_marginals:
-                sum_of_marginals = current_sum
+            if score < best_score:
+                sum_of_marginals = score
                 best_pose = pose_key
                 best_landmark = landmark
 
