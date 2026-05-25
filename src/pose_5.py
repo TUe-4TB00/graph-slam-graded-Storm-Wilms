@@ -48,11 +48,7 @@ def minimize_marginals(graph, initial_estimate, pose_options):
     #TODO: try different pose and landmark options here, and keep the one with the lowest sum of marginals.
     best_pose = "a"      # chosen pose option
     best_landmark = 1    # chosen landmark (1 or 2)
-    pose_5 = pose_options[best_pose] 
-    graph, initial_estimate = add_pose(graph, initial_estimate, pose_5) 
-    result = optimize(graph, initial_estimate) 
-    graph = add_landmark_measurement(graph, result, pose_5, best_landmark) 
-    result = optimize(graph, initial_estimate)
+    
 
     sum_of_marginals = float("inf")
 
@@ -87,11 +83,7 @@ def minimize_errors(graph, initial_estimate, pose_options):
     #TODO: try different pose and landmark options here, and keep the one with the lowest resulting error.
     best_pose = "a"      # chosen pose option
     best_landmark = 1    # chosen landmark (1 or 2)
-    pose_5 = pose_options[best_pose] 
-    graph, initial_estimate = add_pose(graph, initial_estimate, pose_5) 
-    result = optimize(graph, initial_estimate) 
-    graph = add_landmark_measurement(graph, result, pose_5, best_landmark) 
-    result = optimize(graph, initial_estimate)
+    
 
     sum_of_errors = float("inf")
 
