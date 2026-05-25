@@ -46,8 +46,6 @@ def optimize(graph, initial_estimate):
 
 def minimize_marginals(graph, initial_estimate, pose_options):
     #TODO: try different pose and landmark options here, and keep the one with the lowest sum of marginals.
-    best_pose = "a"      # chosen pose option
-    best_landmark = 2    # chosen landmark (1 or 2)
 
     sum_of_marginals = float("inf")
 
