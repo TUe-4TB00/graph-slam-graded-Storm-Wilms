@@ -46,31 +46,38 @@ def optimize(graph, initial_estimate):
 
 def minimize_marginals(graph, initial_estimate, pose_options):
     #TODO: try different pose and landmark options here, and keep the one with the lowest sum of marginals.
-    best_pose = 'a'
-    best_landmark = 1
+    best_pose = "a"      # chosen pose option
+    best_landmark = 1    # chosen landmark (1 or 2)
+
     sum_of_marginals = float("inf")
 
     for pose_key, pose_5 in pose_options.items():
-
         for landmark in [1, 2]:
 
             temp_graph = gtsam.NonlinearFactorGraph(graph)
-            temp_values = gtsam.Values(initial_estimate)
+            temp_initial = gtsam.Values(initial_estimate)
 
-            # 1. add pose
-            temp_graph, temp_values = add_pose(temp_graph, temp_values, pose_5)
-            result = optimize(temp_graph, temp_values)
+            temp_graph, temp_initial = add_pose(temp_graph, temp_initial, pose_5)
 
-            # 2. add landmark factor
+            result = optimize(temp_graph, temp_initial)
+
             temp_graph = add_landmark_measurement(temp_graph, result, pose_5, landmark)
-            result = optimize(temp_graph, temp_values)
 
-            # 3. ONLY landmark uncertainty (this is what grader expects)
+            result = optimize(temp_graph, temp_initial)
+
+            # TODO: Calculate marginal covariances for the relevant variables and visualize the updated factor graph with covariances
             marginals = gtsam.Marginals(temp_graph, result)
-            score = marginals.marginalCovariance(L(landmark)).sum()
 
-            if score < sum_of_marginals:
-                sum_of_marginals = score
+            # The sum of the marginals for each landmark can be computed using marginals.marginalCovariance(L(x)).sum()
+            current_sum = (
+                marginals.marginalCovariance(L(1)).sum() +
+                marginals.marginalCovariance(L(2)).sum()
+            )
+
+            if current_sum < sum_of_marginals:
+                sum_of_marginals = current_sum
+                best_pose = pose_key
+                best_landmark = landmark
 
     return best_pose, best_landmark, sum_of_marginals
 
