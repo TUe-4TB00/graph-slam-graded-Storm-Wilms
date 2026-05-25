@@ -81,7 +81,6 @@ def minimize_errors(graph, initial_estimate, pose_options):
     #TODO: try different pose and landmark options here, and keep the one with the lowest resulting error.
     best_pose = "a"      # chosen pose option
     best_landmark = 1    # chosen landmark (1 or 2)
-    
 
     sum_of_errors = float("inf")
 
@@ -91,17 +90,28 @@ def minimize_errors(graph, initial_estimate, pose_options):
             temp_graph = gtsam.NonlinearFactorGraph(graph)
             temp_initial = gtsam.Values(initial_estimate)
 
-            temp_graph, temp_initial = add_pose(temp_graph, temp_initial, pose_5)
+            temp_graph, temp_initial = add_pose(
+                temp_graph,
+                temp_initial,
+                pose_5
+            )
 
             result = optimize(temp_graph, temp_initial)
 
-            temp_graph = add_landmark_measurement(temp_graph, result, pose_5, landmark)
+            temp_graph = add_landmark_measurement(
+                temp_graph,
+                result,
+                pose_5,
+                landmark
+            )
 
+            # DO NOT OPTIMIZE AGAIN
 
             # TODO: create a list of errors (each index corresponds to a pose) and add the error of each pose to the list
             list_of_errors = []
 
-            list_of_errors.append(temp_graph.error(result))
+            for factor in temp_graph:
+                list_of_errors.append(factor.error(result))
 
             # TODO: compute the sum of the errors and return it along with the best pose and landmark
             current_error = np.sum(list_of_errors)
@@ -110,5 +120,5 @@ def minimize_errors(graph, initial_estimate, pose_options):
                 sum_of_errors = current_error
                 best_pose = pose_key
                 best_landmark = landmark
-   
-    return best_pose, best_landmark, sum_of_errors 
+
+    return best_pose, best_landmark, sum_of_errors
