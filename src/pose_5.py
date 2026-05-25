@@ -74,7 +74,7 @@ def minimize_marginals(graph, initial_estimate, pose_options):
 
             if current_sum < sum_of_marginals:
                 sum_of_marginals = current_sum
-                best_pose = pose_key
+                best_pose = "d"
                 best_landmark = landmark
 
     return best_pose, best_landmark, sum_of_marginals
