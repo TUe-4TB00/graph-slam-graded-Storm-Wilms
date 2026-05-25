@@ -25,7 +25,7 @@ def add_pose(graph, initial_estimate):
     initial_estimate.insert(
     X(4),
     gtsam.Pose2(
-        2.0 + 2.0 * np.sqrt(2),
+        2.0 - 2.0 * np.sqrt(2),
         0.0 + 2.0 * np.sqrt(2),
         np.deg2rad(45.0)
     )
