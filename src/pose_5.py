@@ -48,7 +48,7 @@ def minimize_marginals(graph, initial_estimate, pose_options):
     #TODO: try different pose and landmark options here, and keep the one with the lowest sum of marginals.
     best_pose = 'a'
     best_landmark = 1
-    best_score = float("inf")
+    sum_of_marginals = float("inf")
 
     for pose_key, pose_5 in pose_options.items():
 
@@ -69,10 +69,8 @@ def minimize_marginals(graph, initial_estimate, pose_options):
             marginals = gtsam.Marginals(temp_graph, result)
             score = marginals.marginalCovariance(L(landmark)).sum()
 
-            if score < best_score:
+            if score < sum_of_marginals:
                 sum_of_marginals = score
-                best_pose = pose_key
-                best_landmark = landmark
 
     return best_pose, best_landmark, sum_of_marginals
 
