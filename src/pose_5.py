@@ -68,11 +68,7 @@ def minimize_marginals(graph, initial_estimate, pose_options):
 
             # TODO: Calculate marginal covariances for the relevant variables and visualize the updated factor graph with covariances
             marginals = gtsam.Marginals(temp_graph, result)
-
-            current_sum = (
-                marginals.marginalCovariance(X(5)).trace() +
-                marginals.marginalCovariance(L(landmark)).trace()
-            )
+            current_sum = marginals.marginalCovariance(L(landmark)).sum()
 
             if current_sum < sum_of_marginals:
                 sum_of_marginals = current_sum
