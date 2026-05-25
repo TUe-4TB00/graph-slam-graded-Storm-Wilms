@@ -79,46 +79,27 @@ def minimize_marginals(graph, initial_estimate, pose_options):
 
 def minimize_errors(graph, initial_estimate, pose_options):
     #TODO: try different pose and landmark options here, and keep the one with the lowest resulting error.
-    best_pose = "a"      # chosen pose option
-    best_landmark = 1    # chosen landmark (1 or 2)
-
-    sum_of_errors = float("inf")
+    best_pose = None
+    best_landmark = None
+    best_error = float("inf")
 
     for pose_key, pose_5 in pose_options.items():
+
         for landmark in [1, 2]:
 
             temp_graph = gtsam.NonlinearFactorGraph(graph)
-            temp_initial = gtsam.Values(initial_estimate)
+            temp_values = gtsam.Values(initial_estimate)
 
-            temp_graph, temp_initial = add_pose(
-                temp_graph,
-                temp_initial,
-                pose_5
-            )
+            temp_graph, temp_values = add_pose(temp_graph, temp_values, pose_5)
+            result = optimize(temp_graph, temp_values)
 
-            result = optimize(temp_graph, temp_initial)
+            temp_graph = add_landmark_measurement(temp_graph, result, pose_5, landmark)
+            result = optimize(temp_graph, temp_values)
 
-            temp_graph = add_landmark_measurement(
-                temp_graph,
-                result,
-                pose_5,
-                landmark
-            )
+            error = temp_graph.error(result)
 
-            result = optimize(temp_graph, result)
-
-
-            # TODO: create a list of errors (each index corresponds to a pose) and add the error of each pose to the list
-            list_of_errors = []
-
-            current_error = temp_graph.error(temp_initial)
-
-            list_of_errors.append(current_error)
-
-            sum_of_current_errors = np.sum(list_of_errors)
-
-            if sum_of_current_errors < sum_of_errors:
-                sum_of_errors = sum_of_current_errors
+            if error < best_error:
+                sum_of_errors = error
                 best_pose = pose_key
                 best_landmark = landmark
 
